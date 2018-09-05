@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <script>
+       // var a = [2, 1, 4, 9, 0, 3, 5, 6, 8, 7, 6][
+        
+        //function bublesort(a)
+        //compare first two numbers in array
+         //   num1 = 0,
+           // num2 = 1,
+           // if {bublesort(num1)} < bublesort(num2)}; 
+            //then 
+            //if first number is less than second number. Leave it alone
+            // if second number is less than first number swap numbers
+            // compare the second number and third numbers and repeat
+        
+
+        var a = [2, 1, 4, 9, 0, 3, 5, 6, 8, 7, 6];
+
+        function bublesort(a)
+        {
+            var swapped;
+            do {
+                swapped = false;
+                for (var i=0; i < a.length - 1; 1++){
+                    if (a[i]) > a[i + 1]) {
+                        var temp = a[i];
+                        a[i] = a[i+1];
+                        a[i+1] = temp;
+                        swapped = true;
+                    }
+                }
+            }while (swapped);
+        }
+
+bublesort(a);
+console.log(a);
+        
+
+/*
+//Given the array
+//[2, 1, 4, 9, 0, 3, 5, 6, 8, 7, 6]
+//Write a bubblesort
+//aka series of loops to sort the array from 0-9
+
+array1 = []
+
+for (temp1 = 0; temp 1> array1.size; temp1 ++){
+    for(var temp2=0; temp2 < array1.lenght - 1; temp2 ++)
+}
+if {array(temp2) > array(temp2 + 1), 
+    var holdme = array(temp2);
+    array(temp2) = array1[temp + 1];
+    array1[temp2+1} = holdme
+}
+
+
+//you cannot compare array to array in javascript
+//compare one number in array to annoter in array or another array
+
+        </script>
+</body>

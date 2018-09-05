@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>Sample HTML5 File</title>
+        <script type="text/javascript" charset="utf-8">
+            function splashScreen(){
+                var canvas = document.getElementById('game');  
+                var ctx = canvas.getContext('2d');
+                canvas.width = canvas.width;
+                ctx.font="50px monospace";
+                // Print game over as a gradient
+                var gradient=ctx.createLinearGradient(0,0, canvas.width ,0);
+                
+                gradient.addColorStop("0","white");
+                gradient.addColorStop("0.5","yellow");
+                gradient.addColorStop("1.0","red");
+                // Fill with gradient
+                ctx.fillStyle=gradient;
+                ctx.textAlign="center"; 
+                ctx.fillText("Don't Die",400,200);
+                setInterval(function(){
+                    if(ctx.fillStyle==='#000000'){
+                        ctx.fillStyle = '#ffffff';
+                    }else{
+                        ctx.fillStyle = '#000000';
+                    }
+                    
+                    ctx.font="25px monospace";
+                    ctx.fillText("Press start to play",400,260);
+                },700);
+                
+            }
+			function pageLoaded(){
+                var gameOver = false;
+				// Get a handle to the canvas object
+				var canvas = document.getElementById('game');  
+                canvas.width = canvas.width;
+				// Get the 2d context for this canvas
+				var ctx = canvas.getContext('2d');
+                var score = 0;
+                var scoreText = 'Score: ' + score;
+                ctx.font="14px monospace";
+                ctx.textAlign="end"; 
+                ctx.fillText(scoreText, 785, 15);
+                //player
+                var dx=0;
+                var dir='right';
+                var rect = {x:0,y:300,w:50,h:50};
+                var player = setInterval(()=>{
+                    ctx.clearRect(dx, rect.y, rect.w, rect.h);
+                    if(dx >= 750){
+                        dir = 'left';
+                    }else if(dx <= 0){
+                        dir = 'right';
+                    }
+                    if(dx<750 && dir=='right'){
+                        dx++;
+                    }else{
+                        dx--;
+                    }
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(dx, rect.y, rect.w, rect.h);
+                }, 6);
+                //Process a game over event
+                function gameOver(){
+                    
+                }
+            
+                //Create a spawn at a random x-coord
+                //This spawn will move along the y-coord
+                function spawn(theSpawn){
+                    //bad guys
+                    var tx=0;
+                    var evilRect = {x:Math.floor(Math.random()*800),y:20,w:10,h:10};
+                    var speeds = [2, 1.1, 1, .9, .8, .7, .6, .5, .4, .3, .1];
+                    var speed = [Math.floor(Math.random() * speeds.length)];
+                    //window['abc'] is the same as var abc
+                    window[theSpawn] = setInterval(()=>{
+                    
+                        //clear the spawns previous position
+                        //and redraw at +1px
+                        ctx.clearRect(evilRect.x,evilRect.y,evilRect.w,evilRect.h);
+                        tx++;
+                        ctx.fillStyle = "yellow";
+                        evilRect = {x:evilRect.x, y:tx, w:evilRect.w,h:evilRect.h};
+                        ctx.fillRect(evilRect.x,evilRect.y,evilRect.w,evilRect.h);
+                        //If the spawn cross the height of the canvas the 
+                        //the player's score will increment and the spawn's
+                        //timer will clear
+                        if(evilRect.y>=canvas.height){
+                            
+                            if(gameOver === false){
+                                ctx.fillStyle = '#000';
+                                ctx.fillText(scoreText, 785, 15);
+                                ctx.clearRect(600, 0, 200, 20);
+                                ctx.fillStyle = '#fff';
+                                ctx.font="14px monospace";
+                                score = score + 10;
+                                scoreText = 'Score: ' + score; 
+                                //ctx.ctx.fillStyle = '#fff';
+                                //console.log(scoreText);
+                                
+                                ctx.fillText(scoreText, 785, 15);
+                            }
+                            clearInterval(window[theSpawn]);
+                        }
+                        //Collision detection, adapted from
+                        //https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+                        if (rect.x < evilRect.x + evilRect.w &&
+                            evilRect.x > dx && evilRect.x < (dx + rect.w) &&
+                            rect.y < evilRect.y + evilRect.h &&
+                            rect.y + rect.h > evilRect.y) {
+                            //On collision clear the player's and 
+                            //colliding spawn's timers
+                            //set game over to true
+                            //and print game over to the canvas
+                            clearInterval(player);
+                            clearInterval(window[theSpawn]);
+                            gameOver = true;
+                            ctx.font="30px monospace";
+                            // Print game over as a gradient
+                            var gradient=ctx.createLinearGradient(0,0, canvas.width ,0);
+                            
+                            gradient.addColorStop("0","white");
+                            gradient.addColorStop("0.5","yellow");
+                            gradient.addColorStop("1.0","red");
+                            // Fill with gradient
+                            ctx.fillStyle=gradient;
+                            ctx.textAlign="center"; 
+                            ctx.fillText("Game Over!",400,200);
+                            document.getElementById('Start').style.display='inline-block';
+                        }
+                    }, speed);
+                }
+                //Create a new spawn every 450ms
+                var spawner = setInterval(()=>{
+                    //Use psuedo-random strings to name the new spawns 
+                    var text = "";
+                    var possible = "abcdefghijklmnopqrstuvwxyz";
+                    for (var i = 0; i < 10; i++){
+                        text += possible.charAt(Math.floor(Math.random() * possible.length));
+                    }
+                    
+                    //Play until game over then clear
+                    //the spawner
+                    if(gameOver===false){
+                        spawn(text);
+                    }else{
+                        clearInterval(spawner);
+                    }
+                }, 450);
+                //Controls - change direction on keyup
+                window.addEventListener('keyup', function(){
+                    if(dir === 'left'){
+                        dir = 'right';
+                    }else if(dir === 'right'){
+                        dir = 'left';
+                    }
+                });
+            }
+        </script>
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Nova+Square" rel="stylesheet">
+        <style>
+            * {
+                font-family: 'Nova Square', cursive;
+            }
+            body{
+                width: 800px; 
+                margin: 0 auto; 
+                text-align: center;
+            }
+            canvas{
+                border:1px solid black; 
+                background: #000;
+            }
+            #Start {
+                cursor: pointer; 
+                font-size: 2em; 
+                padding: 1em; 
+                border: none; 
+                border-radius: 100%;
+            }
+            
+        </style>
+	</head>
+	<body onload="splashScreen();">
+        <h1>Don't Die</h1>
+		<canvas width="800" height="400" id="game">			
+			Your browser does not support the HTML5 Canvas tag. Please switch to a newer browser	
+        </canvas>
+
+        <p>Press any key to change direction</p>
+        <button id="Start" onclick="pageLoaded(); this.style.display='none';">Start</button>
+
+	</body>
+</html>
